@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h1 class="h2">Gestión de Imágenes</h1>
+        <a href="{% url 'inventory:dashboard' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-images"></i> Imágenes Disponibles
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Vista Previa</th>
+                            <th>Nombre</th>
+                            <th>Fecha de Subida</th>
+                            <th>Productos Asociados</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for img in images %}
+                        <tr>
+                            <td>
+                                <img src="{{ img.image.url }}" alt="{{ img.name }}" 
+                                     class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                            </td>
+                            <td>
+                                <form method="POST" class="edit-form d-none" id="form-{{ img.id }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="image_id" value="{{ img.id }}">
+                                    <input type="text" name="new_name" value="{{ img.name }}" 
+                                           class="form-control form-control-sm">
+                                    <button type="submit" name="edit" class="btn btn-success btn-sm mt-1">
+                                        Guardar
+                                    </button>
+                                </form>
+                                <span class="image-name" id="name-{{ img.id }}">{{ img.name }}</span>
+                            </td>
+                            <td>{{ img.uploaded_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ img.product_set.count }}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" 
+                                        onclick="toggleEdit('{{ img.id }}')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="image_id" value="{{ img.id }}">
+                                    <button type="submit" name="delete" class="btn btn-danger btn-sm"
+                                            {% if img.product_set.count > 0 %}disabled{% endif %}
+                                            onclick="return confirm('¿Estás seguro de eliminar esta imagen?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleEdit(id) {
+    const form = document.getElementById(`form-${id}`);
+    const name = document.getElementById(`name-${id}`);
+    form.classList.toggle('d-none');
+    name.classList.toggle('d-none');
+}
+</script>
+{% endblock %}

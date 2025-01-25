@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h1 class="h2">Historial de Inventario</h1>
+        <div>
+            <a href="{% url 'inventory:dashboard' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Volver al Dashboard
+            </a>
+            <a href="{% url 'inventory:export_inventory_pdf' %}" class="btn btn-outline-danger">
+                <i class="bi bi-file-earmark-pdf"></i> Exportar a PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Debug info -->
+    <div class="mb-3">
+        <p class="text-muted">Total de movimientos: {{ total_movements }}</p>
+    </div>
+    
+    <!-- Tabla de movimientos -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            Registro de Cambios
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Cambio</th>
+                            <th>Usuario</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if movements %}
+                            {% for movement in movements %}
+                            <tr>
+                                <td>{{ movement.timestamp|date:"d/m/Y H:i" }}</td>
+                                <td>{{ movement.product.name }}</td>
+                                <td>
+                                    {% if movement.quantity_changed > 0 %}
+                                        <span class="badge bg-success">+{{ movement.quantity_changed }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ movement.quantity_changed }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ movement.user.username }}</td>
+
+
+                                <td>
+                                    {{ movement.notes|default:"-" }}
+                                    {% if movement.changed_fields %}
+                                        <ul>
+                                            <li>{{ movement.get_changed_fields_display }}</li>
+                                        </ul>
+                                    {% endif %}
+                                </td>
+
+
+
+
+
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">No hay registros de movimientos</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if movements.has_other_pages %}
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if movements.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ movements.previous_page_number }}">&laquo;</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for i in movements.paginator.page_range %}
+                        <li class="page-item {% if movements.number == i %}active{% endif %}">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    
+                    {% if movements.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ movements.next_page_number }}">&raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
