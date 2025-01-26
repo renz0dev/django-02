@@ -11,6 +11,7 @@ pandas
 openpyxl
 xlsxwriter
 djangorestframework
+PyMySQL
 django-cors-headers
 django-filter
 gunicorn
