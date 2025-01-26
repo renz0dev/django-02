@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-glxe1gcfimrhu3dg3fj#_ecue-7n=nols@v-!)qix_&&l*6avl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','django-02-production.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1','django-02-production.up.railway.app']
 
 
 # Application definition
@@ -97,11 +97,11 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_grafitacnaact',
+        'NAME': 'railway',
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'PASSWORD': 'yCokYoBEOeFalUPHhDzzlQcsvdDoTCFS',
+        'HOST': 'roundhouse.proxy.rlwy.net',
+        'PORT': '46755',
     }
 }
 
