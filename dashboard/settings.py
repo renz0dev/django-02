@@ -169,6 +169,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Cambia según el puerto usado por Vite
     "https://grafitacnaperu.vercel.app",
     "https://django-02-production.up.railway.app",
+    "https://grafitacna-07-production.up.railway.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
