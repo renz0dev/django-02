@@ -170,6 +170,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://grafitacnaperu.vercel.app",
     "https://django-02-production.up.railway.app",
     "https://grafitacna-07-production.up.railway.app",
+    "https://grafitacna-08-production.up.railway.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
