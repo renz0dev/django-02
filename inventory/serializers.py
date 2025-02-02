@@ -19,7 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_image(self, obj):
         # Si la imagen existe, devuelve la URL completa de Cloudinary
         if obj.image:
-            return cloudinary.utils.cloudinary_url(obj.image.name)[0]
+            return obj.image.url
         return None
 
     class Meta:
