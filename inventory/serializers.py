@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Category, ProductImage
-import cloudinary.utils
+from .models import Product, Category, ProductImagezz
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,14 +13,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
-    image = serializers.SerializerMethodField()
-
-    def get_image(self, obj):
-        # Si la imagen existe, devuelve la URL completa de Cloudinary
-        if obj.image:
-            return cloudinary.utils.cloudinary_url(obj.image.name)[0]
-        return None
-
+    
     class Meta:
         model = Product
         fields = [
