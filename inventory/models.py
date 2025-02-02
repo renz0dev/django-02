@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 class ProductImage(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -29,7 +30,7 @@ class Product(models.Model):
     stock = models.IntegerField()
     views = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='products/', blank=True, null=True)
+    image = CloudinaryField('image')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):

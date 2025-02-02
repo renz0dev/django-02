@@ -16,3 +16,4 @@ django-cors-headers
 django-filter
 gunicorn
 cloudinary
+python-dotenv
