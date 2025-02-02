@@ -15,3 +15,4 @@ PyMySQL
 django-cors-headers
 django-filter
 gunicorn
+cloudinary
