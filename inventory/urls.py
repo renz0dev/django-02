@@ -3,6 +3,7 @@
 from django.urls import path
 from . import views
 from . import api_views  # Importación correcta
+from .views import enviar_reclamo
 
 app_name = 'inventory'
 
@@ -33,7 +34,7 @@ urlpatterns = [
     path('api/products/<int:pk>/', api_views.ProductRetrieveUpdateDestroyAPI.as_view(), name='api_product_detail'),
     path('api/categories/', api_views.CategoryListCreateAPI.as_view(), name='api_category_list'),
     path('api/categories/<int:pk>/', api_views.CategoryRetrieveUpdateDestroyAPI.as_view(), name='api_category_detail'),
-    
+    path("api/enviar-reclamo/", enviar_reclamo, name="enviar-reclamo"),
     
     path('api/token/', api_views.CustomAuthToken.as_view(), name='api_token_auth'),
     

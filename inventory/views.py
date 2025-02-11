@@ -13,6 +13,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Product, Category, InventoryMovement
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
   
 @login_required
 def dashboard(request):
@@ -1119,3 +1123,33 @@ def export_inventory_pdf(request):
 @login_required
 def inventory_import_export(request):
     return render(request, 'inventory/import_export.html')
+
+@csrf_exempt
+def enviar_reclamo(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        mensaje = f"""
+        Fecha: {data['fecha']}
+        Nombres: {data['nombres']}
+        Tipo Documento: {data['tipoDocumento']}
+        Número Documento: {data['numeroDocumento']}
+        Dirección: {data['direccion']}
+        Correo: {data['correo']}
+        Teléfono: {data['telefono']}
+        Tipo de bien: {data['tipoBien']}
+        Tipo de reclamación: {data['tipoReclamo']}
+        Detalle: {data['detalleReclamo']}
+        """
+
+        send_mail(
+            "Nuevo Reclamo - Libro de Reclamaciones",
+            mensaje,
+            "tu_correo@gmail.com",
+            ["jcapazape2020@gmail.com"],
+            fail_silently=False,
+        )
+
+        return JsonResponse({"mensaje": "Correo enviado correctamente"}, status=200)
+    
+    return JsonResponse({"error": "Método no permitido"}, status=405)

@@ -175,8 +175,13 @@ LOGIN_URL = '/accounts/login/'      # URL del formulario de login
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "elbuenitop777@gmail.com"  # Tu cuenta de Gmail
+EMAIL_HOST_PASSWORD = "cdlt aqog qwvn vmdo"  # Contraseña de aplicación de Gmail
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Cambia según el puerto usado por Vite
