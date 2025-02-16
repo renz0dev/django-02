@@ -13,7 +13,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Product, Category, InventoryMovement
+from django.http import JsonResponse
+import resend
+from django.views.decorators.csrf import csrf_exempt
 import json
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
   
 @login_required
 def dashboard(request):
@@ -1120,3 +1125,35 @@ def export_inventory_pdf(request):
 @login_required
 def inventory_import_export(request):
     return render(request, 'inventory/import_export.html')
+
+resend.api_key = "re_h4V2SZz1_5fW9p2UW7uCTZ2NcvQrzQYNP"
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])  # Deshabilitar CSRF solo si es necesario (preferible usar tokens de autenticación)
+def enviar_reclamo(request):
+    if request.method == "POST":
+        data = request.data
+
+        try:
+            response = resend.Emails.send({
+                "from": "onboarding@resend.dev",
+                "to": "yatorow@proton.me",
+                "subject": "Nuevo Reclamo en el Libro de Reclamaciones",
+                "html": f"""
+                    <h2>Nuevo Reclamo Registrado</h2>
+                    <p><strong>Fecha:</strong> {data['fecha']}</p>
+                    <p><strong>Nombres:</strong> {data['nombres']}</p>
+                    <p><strong>Tipo de Documento:</strong> {data['tipoDocumento']}</p>
+                    <p><strong>Número de Documento:</strong> {data['numeroDocumento']}</p>
+                    <p><strong>Dirección:</strong> {data['direccion']}</p>
+                    <p><strong>Correo:</strong> {data['correo']}</p>
+                    <p><strong>Teléfono:</strong> {data['telefono']}</p>
+                    <p><strong>Tipo de Reclamo:</strong> {data['tipoReclamo']}</p>
+                    <p><strong>Detalle:</strong> {data['detalleReclamo']}</p>
+                """
+            })
+            return JsonResponse({"message": "Correo enviado correctamente", "status": response})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Método no permitido"}, status=405)
