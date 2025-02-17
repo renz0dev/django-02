@@ -1126,7 +1126,7 @@ def export_inventory_pdf(request):
 def inventory_import_export(request):
     return render(request, 'inventory/import_export.html')
 
-resend.api_key = "re_h4V2SZz1_5fW9p2UW7uCTZ2NcvQrzQYNP"
+resend.api_key = os.getenv("RESEND_API_KEY")
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])  # Deshabilitar CSRF solo si es necesario (preferible usar tokens de autenticación)
@@ -1138,18 +1138,33 @@ def enviar_reclamo(request):
             response = resend.Emails.send({
                 "from": "onboarding@resend.dev",
                 "to": "yatorow@proton.me",
-                "subject": "Nuevo Reclamo en el Libro de Reclamaciones",
+                "subject": "Nuevo Reclamo en el Libro de Reclamaciones Virtual",
                 "html": f"""
-                    <h2>Nuevo Reclamo Registrado</h2>
-                    <p><strong>Fecha:</strong> {data['fecha']}</p>
-                    <p><strong>Nombres:</strong> {data['nombres']}</p>
-                    <p><strong>Tipo de Documento:</strong> {data['tipoDocumento']}</p>
-                    <p><strong>Número de Documento:</strong> {data['numeroDocumento']}</p>
-                    <p><strong>Dirección:</strong> {data['direccion']}</p>
-                    <p><strong>Correo:</strong> {data['correo']}</p>
-                    <p><strong>Teléfono:</strong> {data['telefono']}</p>
-                    <p><strong>Tipo de Reclamo:</strong> {data['tipoReclamo']}</p>
-                    <p><strong>Detalle:</strong> {data['detalleReclamo']}</p>
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                        <div style="text-align: center;">
+                            <img src="https://i.ibb.co/QFMdypFT/grafitacna-logo.png" alt="Grafitacna Logo" style="max-width: 150px; margin-bottom: 20px;">
+                        </div>
+                        <h2 style="color: #333; text-align: center;">Nuevo Reclamo Registrado</h2>
+                        <p style="text-align: center; color: #555;">Se ha registrado un nuevo reclamo en el Libro de Reclamaciones de la pagina web GRAFITACNA.</p>
+                        <hr style="border: 1px solid #ddd;">
+                        <div style="padding: 10px;">
+                            <p><strong>Fecha:</strong> {data['fecha']}</p>
+                            <p><strong>Nombre completo:</strong> {data['nombres']}</p>
+                            <p><strong>Tipo de Documento:</strong> {data['tipoDocumento']}</p>
+                            <p><strong>N° de Documento:</strong> {data['numeroDocumento']}</p>
+                            <p><strong>Dirección:</strong> {data['direccion']}</p>
+                            <p><strong>Correo:</strong> {data['correo']}</p>
+                            <p><strong>Teléfono:</strong> {data['telefono']}</p>
+                            <p><strong>Tipo de bien recibido:</strong> {data['tipoBien']}</p>
+                            <p><strong>Descripción del Bien:</strong> {data['descripcionBien']}</p>
+                            <p><strong>Tipo de Reclamo:</strong> {data['tipoReclamo']}</p>
+                            <p><strong>Detalle:</strong> {data['detalleReclamo']}</p>
+                        </div>
+                        <hr style="border: 1px solid #ddd;">
+                        <p style="text-align: center; font-size: 12px; color: #777;">
+                            Este es un mensaje automático. Si los datos recibidos en este correo parecen ser falsos o hechos en broma, se debe desechar el reclamo. De no ser asi, se deberá responder el reclamo lo antes posible por correo o telefono obligatoriamente, tal como indica la normativa peruana.
+                        </p>
+                    </div>
                 """
             })
             return JsonResponse({"message": "Correo enviado correctamente", "status": response})
