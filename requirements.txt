@@ -1,4 +1,4 @@
-﻿django 
+django
 django-crispy-forms 
 reportlab 
 pandas 

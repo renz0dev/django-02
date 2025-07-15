@@ -109,11 +109,11 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
+        'NAME': 'grafitacna_db',
         'USER': 'root',
-        'PASSWORD': 'yCokYoBEOeFalUPHhDzzlQcsvdDoTCFS',
-        'HOST': 'roundhouse.proxy.rlwy.net',
-        'PORT': '46755',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
