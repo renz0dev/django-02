@@ -1,0 +1,122 @@
+{% extends 'inventory/dashboard.html' %}
+
+{% block dashboard_content %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{% if service %}Editar{% else %}Nuevo{% endif %} Servicio Técnico</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Servicio</label>
+                        <input type="text" name="service_name" class="form-control" required
+                               value="{{ service.service_name|default:'' }}">
+                    </div>
+
+                    <!-- Nuevo campo para el cliente -->
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Cliente</label>
+                        <input type="text" name="client_name" class="form-control" required
+                               value="{{ service.client_name|default:'' }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono del Cliente</label>
+                            <input type="tel" name="client_phone" class="form-control" required
+                                   pattern="[0-9]{9}" title="Ingrese un número de teléfono válido de 9 dígitos"
+                                   value="{{ service.client_phone|default:'' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Descripción/Detalles</label>
+                        <textarea name="description" class="form-control" rows="4" required>{{ service.description|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Estado</label>
+                        <select name="status" class="form-select" required>
+                            <option value="registered" {% if service.status == 'registered' %}selected{% endif %}>Registrado</option>
+                            <option value="in_progress" {% if service.status == 'in_progress' %}selected{% endif %}>En Curso</option>
+                            <option value="completed" {% if service.status == 'completed' %}selected{% endif %}>Terminado</option>
+                        </select>
+                    </div>
+                    
+
+
+
+
+                    <div class="mb-3">
+                        <label class="form-label">Repuestos</label>
+                            <select name="parts" class="form-select" id="parts-select" multiple>
+                                {% for product in products %}
+                            <option value="{{ product.id }}"
+                                {% if service and product in service.parts.all %}selected{% endif %}>
+                                {{ product.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Puede buscar y seleccionar múltiples repuestos</small>
+                    </div>
+
+
+
+
+
+                    <div class="text-end">
+                        <a href="{% url 'inventory:service_list' %}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<<script>
+    $(document).ready(function() {
+        $('#parts-select').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'Buscar repuestos...',
+            allowClear: true,
+            language: {
+                noResults: function() {
+                    return "No se encontraron resultados";
+                },
+                searching: function() {
+                    return "Buscando...";
+                }
+            },
+            minimumInputLength: 1,
+            multiple: true,
+            closeOnSelect: false
+        }).on('select2:select', function (e) {
+            $(this).select2('open');
+            // Limpiar el campo de búsqueda
+            setTimeout(function() {
+                $('.select2-search__field').val('');
+            }, 0);
+        });
+    });
+</script>
+
+
+
+
+{% endblock %}

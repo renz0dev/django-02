@@ -1,0 +1,11 @@
+<h2>Actualizar Categoría</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" value="{{ category.name }}" required>
+    
+    <label for="description">Descripción:</label>
+    <textarea id="description" name="description">{{ category.description }}</textarea>
+    
+    <button type="submit">Actualizar</button>
+</form>

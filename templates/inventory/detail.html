@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+
+.btn-outline-primary {
+    border-radius: 20px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.h2 {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+</style>
+
+
+
+<!-- Encabezado y botón de retorno mejorado -->
+<div class="container-fluid px-4"> <!-- Agregamos padding horizontal -->
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h1 class="h2">Vista Detallada del Inventario</h1>
+        <a href="{% url 'inventory:dashboard' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+    
+
+
+<div class="row">
+    <!-- Filtros -->
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Filtros</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="">
+                    <!-- Campo de búsqueda -->
+                        <div class="mb-3">
+                            <label class="form-label">Buscar</label>
+                            <input type="text" name="search" class="form-control" 
+                                value="{{ current_filters.search }}" 
+                                placeholder="Buscar productos...">
+                        </div>
+
+
+                        <div class="mb-3">
+                        <label class="form-label">Categoría</label>
+                        <select name="category" class="form-select">
+                            <option value="all">Todas las categorías</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" 
+                                    {% if current_filters.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Rango de precios -->
+                    <div class="mb-3">
+                        <label class="form-label">Rango de Precios</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" name="min_price" class="form-control" 
+                                       placeholder="Min" value="{{ current_filters.min_price }}">
+                            </div>
+                            <div class="col">
+                                <input type="number" name="max_price" class="form-control" 
+                                       placeholder="Max" value="{{ current_filters.max_price }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado del stock -->
+                    <div class="mb-3">
+                        <label class="form-label">Estado del Stock</label>
+                        <select name="stock_status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="low" {% if current_filters.stock_status == 'low' %}selected{% endif %}>Stock Bajo</option>
+                            <option value="out" {% if current_filters.stock_status == 'out' %}selected{% endif %}>Sin Stock</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-filter"></i> Aplicar Filtros
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+        <!-- Lista de Productos -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Lista de Productos
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Stock</th>
+                                    <th>Precio</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>
+                                        {% if product.image %}
+                                            <a href="#!" onclick="showImage('{{ product.image.url }}', '{{ product.name }}')">
+                                                <img src="{{ product.image.url }}" 
+                                                     alt="{{ product.name }}" 
+                                                     class="img-thumbnail" 
+                                                     style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;">
+                                            </a>
+                                        
+                                        {% else %}
+                                                        <span>NO IMAGEN</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ product.name }}</td>
+                                    <td>{{ product.category.name|default:"Sin categoría" }}</td>
+                                    <td>
+                                        {% if product.stock < 10 %}
+                                            <span class="badge bg-danger">{{ product.stock }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">{{ product.stock }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>S/ {{ product.price|floatformat:2 }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-primary btn-sm rounded-circle me-1" data-bs-toggle="modal"
+                                                data-bs-target="#updateStock{{ product.id }}" style="width: 30px; height: 30px; padding: 0;">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm rounded-circle" data-bs-toggle="modal"
+                                                data-bs-target="#deleteProduct{{ product.id }}" style="width: 30px; height: 30px; padding: 0;">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No se encontraron productos</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        {% if products.paginator.num_pages > 1 %}
+                        <nav aria-label="Navegación de productos">
+                            <ul class="pagination justify-content-center">
+                                {% if products.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.previous_page_number }}">&laquo;</a>
+                                </li>
+                                {% endif %}
+                                
+                                {% for num in products.paginator.page_range %}
+                                <li class="page-item {% if num == products.number %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endfor %}
+                                
+                                {% if products.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.next_page_number }}">&raquo;</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Modales para actualizar y eliminar productos -->
+{% for product in products %}
+    <!-- Modal Actualizar Stock -->
+    <div class="modal fade" id="updateStock{{ product.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Actualizar Producto - {{ product.name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'inventory:update_stock' product.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Imagen del producto con preview y z-index corregido -->
+                            <div class="col-md-12 mb-3">
+                                <label for="image" class="form-label">Imagen del Producto</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    {% if product.image %}
+                                    <div style="position: relative; z-index: 1;">
+                                        <a href="#!" onclick="showImage('{{ product.image.url }}', '{{ product.name }}')">
+                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                                 class="img-thumbnail product-image" 
+                                                 style="max-width: 150px; cursor: pointer;">
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*"
+                                           onchange="previewImage(this)">
+                                </div>
+                                <div id="imagePreview" class="mt-2" style="display: none;">
+                                    <img src="" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
+                                </div>
+                            </div>
+                
+                            <!-- Nombre del Producto y Categoría -->
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Nombre del Producto</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ product.name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Categoría</label>
+                                <select class="form-select" id="category" name="category">
+                                    <option value="">Seleccionar categoría</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" 
+                                            {% if category.id == product.category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                
+                            <!-- Stock y Precio -->
+                            <div class="col-md-6 mb-3">
+                                <label for="stock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="stock" name="stock" 
+                                       value="{{ product.stock }}" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Precio</label>
+                                <div class="input-group" style="margin-top: 0px;">
+                                    <span class="input-group-text" style="background-color: #f8f9fa; border-right: none;">S/</span>
+                                    <input type="text" class="form-control" id="price" name="price" 
+                                           value="{{ product.price|floatformat:2 }}"
+                                           pattern="^\d*\.?\d{0,2}$"
+                                           style="text-align: right; border-left: none;"
+                                           required>
+                                </div>
+                            </div>
+                
+                            <!-- Descripción -->
+                            <div class="col-12 mb-3">
+                                <label for="description" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="description" name="description" 
+                                          rows="3">{{ product.description }}</textarea>
+                            </div>
+                
+                            <!-- Notas de Actualización -->
+                            <div class="col-12 mb-3">
+                                <label for="notes" class="form-label">Notas de Actualización</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                          placeholder="Razón de la actualización"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    
+    <div class="modal fade" id="deleteProduct{{ product.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro que desea eliminar el producto "{{ product.name }}"?</p>
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Esta acción no se puede deshacer y eliminará permanentemente el producto.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="{% url 'inventory:delete_product' product.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para ver la imagen ampliada -->
+<div class="modal fade" id="imageViewerModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageViewerTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="imageViewerImg" src="" alt="" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para el visor de imágenes -->
+<script>
+function showImage(imageUrl, productName) {
+    const modal = new bootstrap.Modal(document.getElementById('imageViewerModal'));
+    document.getElementById('imageViewerImg').src = imageUrl;
+    document.getElementById('imageViewerTitle').textContent = productName;
+    modal.show();
+}
+
+function closeImageViewer() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('imageViewerModal'));
+    if (modal) {
+        modal.hide();
+    }
+}
+
+// Limpiar la imagen cuando se cierra el modal
+document.getElementById('imageViewerModal').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('imageViewerImg').src = '';
+});
+</script>
+{% endfor %}
+{% endblock %}
