@@ -15,6 +15,7 @@ import os
 import pymysql
 import cloudinary
 import cloudinary.uploader
+import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -106,15 +107,21 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'grafitacna_db',
+#        'USER': 'root',
+#        'PASSWORD': 'root',
+#        'HOST': '127.0.0.1',
+#        'PORT': '3306',
+#    }
+#}
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'grafitacna_db',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('NEON_DATABASE_URL')
+    )
 }
 
 

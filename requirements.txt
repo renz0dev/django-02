@@ -18,3 +18,5 @@ gunicorn
 cloudinary
 python-dotenv
 resend
+dj-database-url
+psycopg2-binary
