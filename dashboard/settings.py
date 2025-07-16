@@ -187,11 +187,12 @@ CORS_ALLOWED_ORIGINS = [
     "https://django-02-production.up.railway.app",
     "https://grafitacna-07-production.up.railway.app",
     "https://grafitacna-08-production.up.railway.app",
-    "https://grafitacna-back.onrender.com",
+    "https://grafitacna.netlify.app/",
 
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://django-02-production.up.railway.app",
     "https://grafitacna-08-production.up.railway.app", # Reemplaza esto con tu URL de producción en Railway
+    "https://grafitacna.netlify.app/",
 ]
