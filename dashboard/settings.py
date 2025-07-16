@@ -187,7 +187,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://django-02-production.up.railway.app",
     "https://grafitacna-07-production.up.railway.app",
     "https://grafitacna-08-production.up.railway.app",
-    "grafitacna-back.onrender.com",
+    "https://grafitacna-back.onrender.com",
 
 ]
 
