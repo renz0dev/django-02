@@ -187,14 +187,16 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Cambia según el puerto usado por Vite
     "https://grafitacnaperu.vercel.app",
     "http://localhost:4173",
+    "http://localhost:3000",
     "https://django-02-production.up.railway.app",
     "https://grafitacna-07-production.up.railway.app",
     "https://grafitacna-08-production.up.railway.app",
-    "https://grafitacna-back.onrender.com",
+    "https://grafitacna.netlify.app",
 
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://django-02-production.up.railway.app",
     "https://grafitacna-08-production.up.railway.app", # Reemplaza esto con tu URL de producción en Railway
+    "https://grafitacna.netlify.app",
 ]
