@@ -107,25 +107,25 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQLDATABASE'),
-        'USER': os.getenv('MYSQLUSER'),
-        'PASSWORD': os.getenv('MYSQLPASSWORD'),
-        'HOST': os.getenv('MYSQLHOST'),
-        'PORT': os.getenv('MYSQLPORT'),
-        'OPTIONS': {
-            'ssl': {'ssl-mode': 'REQUIRED'},
-        }
-    }
-}
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': os.getenv('MYSQLDATABASE'),
+#        'USER': os.getenv('MYSQLUSER'),
+#        'PASSWORD': os.getenv('MYSQLPASSWORD'),
+#        'HOST': os.getenv('MYSQLHOST'),
+#        'PORT': os.getenv('MYSQLPORT'),
+#        'OPTIONS': {
+#            'ssl': {'ssl-mode': 'REQUIRED'},
+#        }
+#    }
+# }
 
-#DATABASES = {
-#    'default': dj_database_url.config(
-#        default=os.environ.get('NEON_DATABASE_URL')
-#    )
-#}
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('NEON_DATABASE_URL')
+    )
+}
 
 
 # Password validation
